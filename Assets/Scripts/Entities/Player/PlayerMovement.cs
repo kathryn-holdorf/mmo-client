@@ -32,7 +32,9 @@ public class PlayerMovement : MonoBehaviour {
                 return;
             }
             transform.position = Vector3.MoveTowards(transform.position, player.Destination, player.CharInfo.Velocity * Time.deltaTime);
-            transform.LookAt(player.Destination);
+            var yPos = Terrain.activeTerrain.SampleHeight(transform.position);
+            transform.position = new Vector3(transform.position.x, yPos, transform.position.z);
+            transform.LookAt(new Vector3(player.Destination.x, transform.position.y, player.Destination.z));
         }
     }
 

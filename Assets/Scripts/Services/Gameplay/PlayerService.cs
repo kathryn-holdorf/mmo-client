@@ -88,15 +88,17 @@ public class PlayerService : MonoBehaviour {
 
     private void ApplyPositionUpdate(PositionUpdate update) {
         Player p = players[update.PlayerId];
-        p.transform.position = new Vector3(update.Position.X, 0, update.Position.Y);
-        p.SetDestination(new Vector3(update.Destination.X, 0, update.Destination.Y));
+        var yPos = Terrain.activeTerrain.SampleHeight(new Vector3(update.Position.X, 0, update.Position.Y));
+        var yDestination = Terrain.activeTerrain.SampleHeight(new Vector3(update.Destination.X, 0, update.Destination.Y));
+        p.transform.position = new Vector3(update.Position.X, yPos, update.Position.Y);
+        p.SetDestination(new Vector3(update.Destination.X, yDestination, update.Destination.Y));
         p.CharInfo.Position = update.Position;
         p.CharInfo.Velocity = update.Velocity;
         p.CharInfo.Destination = update.Destination;
     }
 
     private Player CreatePlayer(CharInfo info) {
-        Vector3 position = new Vector3(info.Position.X, 0, info.Position.Y);
+        Vector3 position = new Vector3(info.Position.X, Terrain.activeTerrain.SampleHeight(new Vector3(info.Position.X, 0, info.Position.Y)), info.Position.Y);
         GameObject playerObject = Instantiate(playerPrefab, position, Quaternion.identity);
 
         Player player = playerObject.GetComponent<Player>();
